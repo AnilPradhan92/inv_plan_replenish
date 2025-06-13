@@ -1,0 +1,1 @@
+from backend_scripts.download_inventory import fetch_inventory_data
