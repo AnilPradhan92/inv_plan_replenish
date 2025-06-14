@@ -33,6 +33,7 @@ def login_user(request):
     else:
         return JsonResponse({"message": "Only POST method allowed"}, status=405)
 
+@csrf_exempt
 @api_view(['GET', 'POST'])
 def warehouse_list_create(request):
     if request.method == 'GET':
@@ -46,6 +47,7 @@ def warehouse_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@csrf_exempt
 @api_view(['PUT', 'DELETE'])
 def warehouse_update_delete(request, pk):
     try:

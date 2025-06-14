@@ -24,6 +24,13 @@ Terminal 3: frontend
 
         # API base URL is configured via invwiz/.env
 
+        # Example value:
+        # REACT_APP_API_URL=http://localhost:8000
+
+        # Django API views disable CSRF for local development
+
+
 Terminal 4 (optional): database queries
 
 	psql -U myuser -d mydatabase   (password: login)
+

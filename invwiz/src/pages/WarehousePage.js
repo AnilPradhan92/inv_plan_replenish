@@ -14,6 +14,13 @@ const WarehousePage = ({ collapsed }) => {
   const fetchWarehouses = async () => {
     try {
       const res = await fetch(`${API_URL}/api/warehouses/`);
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Failed to fetch warehouses:', res.status, text);
+        return;
+      }
+
       const data = await res.json();
       setWarehouses(data);
     } catch (err) {
@@ -53,6 +60,11 @@ const WarehousePage = ({ collapsed }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Error updating warehouse:', res.status, text);
+          return;
+        }
         data = await res.json();
         setWarehouses(warehouses.map(w => (w.id === data.id ? data : w)));
       } else {
@@ -61,6 +73,11 @@ const WarehousePage = ({ collapsed }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Error creating warehouse:', res.status, text);
+          return;
+        }
         data = await res.json();
         setWarehouses([...warehouses, data]);
       }
