@@ -9,9 +9,16 @@ const WarehousePage = ({ collapsed }) => {
 
   const sidebarWidth = collapsed ? '60px' : '10px';
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
   const fetchWarehouses = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/warehouses/');
+      const res = await fetch(`${API_URL}/api/warehouses/`);
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Failed to fetch warehouses:', res.status, text);
+        return;
+      }
       const data = await res.json();
       setWarehouses(data);
     } catch (err) {
@@ -46,19 +53,29 @@ const WarehousePage = ({ collapsed }) => {
       let res, data;
 
       if (isEditing) {
-        res = await fetch(`http://localhost:8000/api/warehouses/${form.id}/`, {
+        res = await fetch(`${API_URL}/api/warehouses/${form.id}/`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Error updating warehouse:', res.status, text);
+          return;
+        }
         data = await res.json();
         setWarehouses(warehouses.map(w => (w.id === data.id ? data : w)));
       } else {
-        res = await fetch('http://localhost:8000/api/warehouses/', {
+        res = await fetch(`${API_URL}/api/warehouses/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Error creating warehouse:', res.status, text);
+          return;
+        }
         data = await res.json();
         setWarehouses([...warehouses, data]);
       }
@@ -81,7 +98,7 @@ const WarehousePage = ({ collapsed }) => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:8000/api/warehouses/${id}/`, {
+      await fetch(`${API_URL}/api/warehouses/${id}/`, {
         method: 'DELETE'
       });
       setWarehouses(warehouses.filter(w => w.id !== id));
