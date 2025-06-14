@@ -14,11 +14,13 @@ const WarehousePage = ({ collapsed }) => {
   const fetchWarehouses = async () => {
     try {
       const res = await fetch(`${API_URL}/api/warehouses/`);
+
       if (!res.ok) {
         const text = await res.text();
         console.error('Failed to fetch warehouses:', res.status, text);
         return;
       }
+
       const data = await res.json();
       setWarehouses(data);
     } catch (err) {
