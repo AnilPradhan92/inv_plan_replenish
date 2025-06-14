@@ -1,0 +1,13 @@
+# Ignore Python virtual environment
+vpyenv/
+
+# Ignore Django database
+invwiz_backend/db.sqlite3
+
+# Node modules for front-end
+node_modules/
+invwiz/node_modules/
+
+# React environment files
+invwiz/.env
+
