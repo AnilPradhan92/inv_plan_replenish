@@ -13,6 +13,8 @@ Terminal 2: backend
         pip install psycopg2-binary
         # Remove old SQLite file if present
         del ..\invwiz_backend\db.sqlite3 2> NUL
+        # Create tables in the PostgreSQL database
+        python manage.py makemigrations
         python manage.py migrate
         python manage.py runserver 0.0.0.0:8000
 
