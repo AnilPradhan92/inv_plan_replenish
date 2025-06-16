@@ -29,6 +29,8 @@ sales_df = sales_df.rename(columns={"order_date": "Date", "total_sales": "Sales"
 # Convert to date format
 inventory_df["Date"] = pd.to_datetime(inventory_df["Date"]).dt.date
 sales_df["Date"] = pd.to_datetime(sales_df["Date"]).dt.date
+print(f"Inventory_data fetched until {inventory_df['Date'].max()}")
+print(f"Sales_data fetched until {sales_df['Date'].max()}")
 
 # Filter and clean
 inventory_df = inventory_df[['Date', 'sku', 'Inventory']]
@@ -108,43 +110,48 @@ for sku, group in merged_df.groupby('sku'):
         'latest_inventory': latest_inventory
     })
 
+# Clear existing data
+cursor.execute("DELETE FROM drr_output")
+conn.commit()
+
 # Save results to a new table
-for _, row in results.iterrows():
+print(f"{results[1]}")
+for row in results:
     cursor.execute("""
         INSERT INTO drr_output (
             sku, overall_drr, drr_l15d, drr_l30d, drr_l60d, 
             drr_trajectory, recently_launched, latest_inventory
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """, (
-        str(row['SKU']),
-        float(row['Overall_DRR']),
-        float(row['DRR_L15D']),
-        float(row['DRR_L30D']),
-        float(row['DRR_L60D']),
-        str(row['DRR_Trajectory']),
-        bool(row['Recently_Launched']),
-        int(row['Latest_Inventory']) if not pd.isna(row['Latest_Inventory']) else None
+        str(row['sku']),
+        float(row['overall_drr']),
+        float(row['drr_l15d']),
+        float(row['drr_l30d']),
+        float(row['drr_l60d']),
+        str(row['drr_trajectory']),
+        bool(row['recently_launched']),
+        int(row['latest_inventory']) if not pd.isna(row['latest_inventory']) else None
     ))
 
 
 conn.commit()
 
 # Clear existing data
-cursor.execute("DELETE FROM drr_output")
-conn.commit()
+# cursor.execute("DELETE FROM drr_output")
+# conn.commit()
 
-# Insert new results
-for row in results:
-    cursor.execute("""
-        INSERT INTO drr_output (
-            sku, overall_drr, drr_l15d, drr_l30d, drr_l60d,
-            drr_trajectory, recently_launched, latest_inventory
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-    """, (
-        row['sku'], row['overall_drr'], row['drr_l15d'], row['drr_l30d'],
-        row['drr_l60d'], row['drr_trajectory'], row['recently_launched'], row['latest_inventory']
-    ))
-conn.commit()
+# # Insert new results
+# for row in results:
+#     cursor.execute("""
+#         INSERT INTO drr_output (
+#             sku, overall_drr, drr_l15d, drr_l30d, drr_l60d,
+#             drr_trajectory, recently_launched, latest_inventory
+#         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+#     """, (
+#         row['sku'], row['overall_drr'], row['drr_l15d'], row['drr_l30d'],
+#         row['drr_l60d'], row['drr_trajectory'], row['recently_launched'], row['latest_inventory']
+#     ))
+# conn.commit()
 cursor.close()
 conn.close()
 
