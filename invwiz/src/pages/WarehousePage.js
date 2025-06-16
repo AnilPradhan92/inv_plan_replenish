@@ -51,6 +51,10 @@ const WarehousePage = ({ collapsed }) => {
       max_inventory: parseInt(form.maxInventory)
     };
 
+    if (!form.name || isNaN(payload.doh) || isNaN(payload.max_inventory)) {
+      alert("Please fill in all fields correctly.");
+      return;
+      }
     try {
       let res, data;
 
@@ -76,6 +80,7 @@ const WarehousePage = ({ collapsed }) => {
         if (!res.ok) {
           const text = await res.text();
           console.error('Error creating warehouse:', res.status, text);
+          alert(`❌ Failed to save: ${text}`);
           return;
         }
         data = await res.json();
